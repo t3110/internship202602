@@ -4,6 +4,8 @@ import com.example.internship.entity.BankLoanForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class BankLoanRepository {
@@ -25,6 +27,24 @@ public class BankLoanRepository {
                 bankLoanForm.getLoanPeriod(),
                 bankLoanForm.getInterestRate()
         );
+    }
+
+    public List<Map<String, Object>> findAll() {
+        String sql = "SELECT * FROM bankLoan_table";
+        try {
+            return jdbcTemplate.queryForList(sql);
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
+    public long count() {
+        String sql = "SELECT COUNT(*) FROM bankLoan_table";
+        try {
+            return jdbcTemplate.queryForObject(sql, Long.class);
+        } catch (Exception e) {
+            return 0L;
+        }
     }
 
 }

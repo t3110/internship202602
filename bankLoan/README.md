@@ -77,7 +77,7 @@ IntelliJ から `bankLoan/src/main/java/com/example/internship/InternshipApplica
 
 ```powershell
 cd C:\Users\ffg-training\dev\internship202602\bankLoan
-mvnw spring-boot:run
+./mvnw spring-boot:run
 ```
 
 ### 3. ブラウザでアクセス

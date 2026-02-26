@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQLデータベース確認ツール</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            width: 100%;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 28px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .info-section {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        .info-section.active {
+            display: block;
+        }
+        .info-section h2 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        table tr:hover {
+            background: #f0f0f0;
+        }
+        .record {
+            background: #f0f0f0;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+        .record-field {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .record-field:last-child {
+            border-bottom: none;
+        }
+        .field-label {
+            font-weight: 600;
+            color: #333;
+            flex: 0 0 150px;
+        }
+        .field-value {
+            color: #666;
+            flex: 1;
+            word-break: break-word;
+        }
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏦 銀行ローン申請データベース確認ツール</h1>
+        <p class="subtitle">MySQLに保存されたデータをリアルタイムで確認できます</p>
+
+        <div class="button-group">
+            <button onclick="checkDatabaseInfo()">📊 データベース情報確認</button>
+            <button onclick="getDatabaseData()">📋 全データ表示</button>
+            <button onclick="refreshAll()">🔄 更新</button>
+        </div>
+
+        <div id="db-info-section" class="info-section">
+            <h2>📊 データベース情報</h2>
+            <div id="db-info-content"></div>
+        </div>
+
+        <div id="db-data-section" class="info-section">
+            <h2>📋 保存されたローン申請データ</h2>
+            <div id="db-data-content"></div>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 銀行ローン申請システム | リアルタイムデータベース確認ツール</p>
+        </div>
+    </div>
+
+    <script>
+        function checkDatabaseInfo() {
+            const section = document.getElementById('db-info-section');
+            const content = document.getElementById('db-info-content');
+
+            section.classList.add('active');
+            content.innerHTML = '<div class="loading"><span class="spinner"></span>データベース情報を確認中...</div>';
+
+            fetch('/database-info')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+
+                    if (data.success && data.tableExists) {
+                        html = `
+                            <div class="status success">
+                                ✅ MySQLデータベースに接続しました
+                            </div>
+                            <div class="record">
+                                <div class="record-field">
+                                    <span class="field-label">テーブル名:</span>
+                                    <span class="field-value">bankLoan_table</span>
+                                </div>
+                                <div class="record-field">
+                                    <span class="field-label">データベース名:</span>
+                                    <span class="field-value">internship</span>
+                                </div>
+                                <div class="record-field">
+                                    <span class="field-label">総レコード数:</span>
+                                    <span class="field-value"><strong>${data.recordCount}</strong></span>
+                                </div>
+                                <div class="record-field">
+                                    <span class="field-label">ステータス:</span>
+                                    <span class="field-value">${data.status}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        html = `
+                            <div class="status error">
+                                ❌ エラー: ${data.error}
+                            </div>
+                            <div class="status warning">
+                                💡 対処方法:
+                                <br/>1. MySQLサーバーが起動しているか確認してください
+                                <br/>2. internshipデータベースが作成されているか確認してください
+                                <br/>3. bankLoan_tableテーブルが作成されているか確認してください
+                            </div>
+                        `;
+                    }
+
+                    content.innerHTML = html;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="status error">
+                            ❌ エラー: ${error.message}
+                        </div>
+                    `;
+                });
+        }
+
+        function getDatabaseData() {
+            const section = document.getElementById('db-data-section');
+            const content = document.getElementById('db-data-content');
+
+            section.classList.add('active');
+            content.innerHTML = '<div class="loading"><span class="spinner"></span>データを取得中...</div>';
+
+            fetch('/database-data')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+
+                    if (data.success) {
+                        if (data.count === 0) {
+                            html = `
+                                <div class="status warning">
+                                    ⓘ 保存されたデータがありません
+                                </div>
+                            `;
+                        } else {
+                            html = `
+                                <div class="status success">
+                                    ✅ ${data.count}件のローン申請データが見つかりました
+                                </div>
+                            `;
+
+                            data.data.forEach((record, index) => {
+                                html += `
+                                    <div class="record">
+                                        <div class="record-field" style="background: #e7f3ff; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                                            <strong>📌 申請 #${index + 1}</strong>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">銀行名:</span>
+                                            <span class="field-value">${record.bankName || '-'}</span>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">支店名:</span>
+                                            <span class="field-value">${record.branchName || '-'}</span>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">口座種別:</span>
+                                            <span class="field-value">${record.bankAccountType || '-'}</span>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">口座番号:</span>
+                                            <span class="field-value">${record.bankAccountNum || '-'}</span>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">申請者名:</span>
+                                            <span class="field-value">${record.name || '-'}</span>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">ローンの種類:</span>
+                                            <span class="field-value">${record.loanType || '-'}</span>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">借入金額:</span>
+                                            <span class="field-value">¥${record.loanAmount ? parseInt(record.loanAmount).toLocaleString() : '-'}</span>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">年収:</span>
+                                            <span class="field-value">¥${record.annualIncome ? parseInt(record.annualIncome).toLocaleString() : '-'}</span>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">借入期間:</span>
+                                            <span class="field-value">${record.loanPeriod || '-'}年</span>
+                                        </div>
+                                        <div class="record-field">
+                                            <span class="field-label">金利:</span>
+                                            <span class="field-value">${record.interestRate || '-'}%</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        }
+                    } else {
+                        html = `
+                            <div class="status error">
+                                ❌ エラー: ${data.error}
+                            </div>
+                        `;
+                    }
+
+                    content.innerHTML = html;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="status error">
+                            ❌ エラー: ${error.message}
+                        </div>
+                    `;
+                });
+        }
+
+        function refreshAll() {
+            checkDatabaseInfo();
+            getDatabaseData();
+        }
+
+        // ページ読み込み時に自動でデータベース情報を確認
+        window.addEventListener('load', checkDatabaseInfo);
+    </script>
+</body>
+</html>
+

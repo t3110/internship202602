@@ -3,6 +3,7 @@ package com.example.internship.controller;
 import com.example.internship.entity.BankLoanForm;
 import com.example.internship.service.ApplyBankLoanService;
 import com.example.internship.dto.ScreeningResponse;
+import com.example.internship.repository.BankLoanRepository;
 import com.example.internship.service.ScreeningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,9 @@ public class BankLoanController {
 
     @Autowired
     private ScreeningService screeningService;
+
+    @Autowired
+    private BankLoanRepository bankLoanRepository;
 
     private static final String FIXED_BANK_NAME = "かわらそば銀行";
 
@@ -76,6 +80,11 @@ public class BankLoanController {
         model.addAttribute("bankLoanApplication", bankLoanForm);
         model.addAttribute("branchOptions", BRANCH_NAMES);
         return "bankLoanMain";
+    }
+
+    @GetMapping("/database-viewer")
+    public String databaseViewer() {
+        return "database-viewer";
     }
 
     @PostMapping("/bankLoanConfirmation")
@@ -170,6 +179,40 @@ public class BankLoanController {
     public Map<String, Object> getAllBranches() {
         Map<String, Object> response = new HashMap<>();
         response.put("branches", BRANCH_NAMES);
+        return response;
+    }
+
+    @GetMapping("/database-info")
+    @ResponseBody
+    public Map<String, Object> getDatabaseInfo() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            long count = bankLoanRepository.count();
+            response.put("success", true);
+            response.put("tableExists", true);
+            response.put("recordCount", count);
+            response.put("status", count > 0 ? "データあり" : "テーブルは存在しますがデータは空です");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("tableExists", false);
+            response.put("error", "bankLoan_tableが見つかりません: " + e.getMessage());
+        }
+        return response;
+    }
+
+    @GetMapping("/database-data")
+    @ResponseBody
+    public Map<String, Object> getDatabaseData() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Map<String, Object>> data = bankLoanRepository.findAll();
+            response.put("success", true);
+            response.put("data", data);
+            response.put("count", data.size());
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+        }
         return response;
     }
 
