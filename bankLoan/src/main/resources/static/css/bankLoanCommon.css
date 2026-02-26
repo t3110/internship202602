@@ -1,0 +1,293 @@
+/* ========================================
+   Bank Loan Common Stylesheet
+   ======================================== */
+
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --error-color: #e74c3c;
+    --gray-light: #f9f9f9;
+    --gray-medium: #e0e0e0;
+    --gray-dark: #333;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+    --shadow-primary: 0 20px 60px rgba(0, 0, 0, 0.3);
+    --shadow-medium: 0 4px 15px rgba(102, 126, 234, 0.4);
+    --progress-active-color: var(--success-color);
+    --progress-fill-color: var(--success-color);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 700px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-primary);
+    overflow: hidden;
+}
+
+.content {
+    padding: 40px 30px;
+}
+
+.header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+    position: relative;
+}
+
+.header h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+.header p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.header-logo {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.header-logo-icon {
+    background-color: transparent;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+.header-logo-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.header-logo-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: brown;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-left: -12px;
+}
+
+.progress-container {
+    margin-top: 20px;
+    position: relative;
+    padding: 0 50px;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.progress-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.progress-step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--primary-color);
+    position: relative;
+    transition: all var(--transition-speed) ease;
+    border: 3px solid transparent;
+}
+
+.progress-step.active .progress-step-circle {
+    background-color: var(--progress-active-color);
+    color: white;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.3);
+}
+
+.progress-step.completed .progress-step-circle {
+    background-color: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+.progress-step-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+.progress-step.active .progress-step-label,
+.progress-step.completed .progress-step-label {
+    color: white;
+    font-weight: 700;
+}
+
+.progress-step.completed .progress-step-label {
+    font-weight: 600;
+}
+
+.progress-bar-line {
+    position: absolute;
+    top: 18px;
+    left: 50px;
+    right: 50px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.3);
+    z-index: 1;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--progress-fill-color);
+    width: 0%;
+    transition: width 0.6s ease;
+    position: relative;
+}
+
+.button-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background-color: var(--gray-medium);
+    color: var(--gray-dark);
+}
+
+.btn-secondary:hover {
+    background-color: #d0d0d0;
+}
+
+@media (max-width: 768px) {
+    .container {
+        border-radius: 0;
+        max-width: 100%;
+    }
+
+    .header {
+        padding: 30px 20px;
+    }
+
+    .header-logo {
+        position: static;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .header-logo-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 28px;
+    }
+
+    .header-logo-text {
+        font-size: 16px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+        margin-top: 0;
+    }
+
+    .progress-container {
+        padding: 0 30px;
+    }
+
+    .progress-step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .progress-step-label {
+        font-size: 11px;
+    }
+
+    .progress-bar-line {
+        left: 30px;
+        right: 30px;
+        top: 15px;
+    }
+
+    .content {
+        padding: 25px 20px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+}
+

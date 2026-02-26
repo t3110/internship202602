@@ -1,31 +1,106 @@
-# bankLoan アプリケーション
+# Bank Loan Application (銀行ローン申し込みシステム)
 
-ローン申込の入力・確認・完了までの一連のフローを提供する Spring Boot アプリです。確認画面では外部の Python 推論 API から「通過/要確認」「スコア」「根拠」を取得して表示します。
+本プロジェクトは、銀行ローンの申し込みプロセスをWebインターフェース経由で処理し、バックエンドの機械学習モデルを用いてリアルタイムに審査を行う統合システムです。
 
-## 特徴
+堅牢なSpring Boot（Java）によるWebアプリケーションと、推論速度に優れたFastAPI（Python）＋LightGBMによる審査APIを連携させた**マイクロサービスアーキテクチャ**を採用しています。
 
-- 申込入力 → 確認 → 完了の 3 画面フロー
-- ローン種別/期間に応じた金利自動計算
-- Python 推論 API による簡易審査（スコア＋根拠）表示
-- 申込内容を MySQL に保存
+## 🌟 主な機能
 
-## 画面とURL
+- **ローン申し込みフロー**: 顧客情報、口座情報、ローン詳細の入力と確認
+- **リアルタイム審査 (AI推論)**: 入力データに基づき、LightGBMモデルが「通過/要確認」を瞬時に自動判定
+- **自動金利計算**: ローンタイプと返済期間に基づく金利の算出
+- **データ管理**: 申し込み情報と審査結果をMySQLデータベースへ安全に保存
+- **管理者用ビューア**: 保存された申し込みデータをWeb上で一覧表示
 
-- 入力画面: `http://localhost:8081/bankLoan`
-- 確認画面: 入力画面の送信で遷移
-- 完了画面: 確認画面の申込ボタンで遷移
+## 🛠 技術スタック
 
-## 外部審査API（Python）
+### Webアプリケーション (Java)
+- **Framework**: Spring Boot 3.4.2 / Java 17
+- **Database**: MySQL 8.0+ / Spring Data JDBC
+- **Template Engine**: Thymeleaf
+- **Build Tool**: Maven 3.6+
 
-確認画面の JavaScript が `http://localhost:8000/screening` に直接 POST します。
-デフォルトの base URL は `bankLoan/src/main/resources/templates/bankLoanConfirmation.html` の
-`data-screening-api-base` 属性で指定しています。
+### スクリーニングAPI (Python)
+- **Framework**: FastAPI 0.115.6 / Uvicorn 0.34.0
+- **Machine Learning**: LightGBM 4.5.0 / scikit-learn 1.5.2 / numpy 2.1.3
+- **Data Validation**: Pydantic 2.10.6
 
-### エンドポイント
+---
 
-- `POST /screening`
+## 🚀 環境構築 (セットアップ手順)
 
-### リクエスト例
+システム全体を稼働させるため、以下の順番でセットアップを行います。
+
+### 1. リポジトリのクローン
+```bash
+git clone <repository-url>
+cd internship202602
+
+```
+
+### 2. データベースの初期化
+
+ルートディレクトリにあるスクリプトを実行し、専用のデータベース(`internship`)とテーブル(`bankLoan_table`)を作成します。
+
+```bash
+bash setup-mysql.sh
+
+```
+
+### 3. スクリーニングAPIの起動 (Python)
+
+審査を行う推論サーバーを別ターミナルで起動します。
+
+```bash
+cd ml-screening-api
+
+# 仮想環境の作成と有効化 (Mac/Linux)
+python3 -m venv .venv
+source .venv/bin/activate
+# Windowsの場合は: .venv\Scripts\activate
+
+# パッケージのインストールと起動
+pip install -r requirements.txt
+uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+
+```
+
+> **Note**: `http://localhost:8000/docs` にアクセスすると、Swagger UIでAPIドキュメントが確認できます。初回起動時に学習済みモデル(`model.joblib`)が自動生成されます。
+
+### 4. Webアプリケーションの起動 (Java)
+
+新しいターミナルを開き、Spring Bootアプリを起動します。
+
+```bash
+cd bankLoan
+
+# 依存関係のインストールと起動
+./mvnw clean install
+./mvnw spring-boot:run
+
+```
+
+> **Note**: アプリケーションはデフォルトで `http://localhost:8081` で起動します。
+
+---
+
+## 📱 使用方法
+
+1. **申し込み画面**: `http://localhost:8081/bankLoan` にアクセスし、必要事項を入力します。
+2. **確認と審査**: 確認画面から「申し込み」を実行すると、バックエンドでPython APIへデータが送信され、AIによる審査が実行されます。
+3. **データ確認**: `http://localhost:8081/database-viewer` から、保存されたレコードと審査結果（通過・要確認、スコアなど）を確認できます。
+
+---
+
+## 🌐 APIリファレンス
+
+### スクリーニングAPI (Python: Port 8000)
+
+| メソッド | エンドポイント | 説明 |
+| --- | --- | --- |
+| `POST` | `/screening` | LightGBMモデルによる審査を実行 |
+
+**リクエスト例:**
 
 ```json
 {
@@ -34,95 +109,61 @@
   "loanPeriod": 20,
   "loanType": "住宅ローン"
 }
+
 ```
 
-### レスポンス例
+### Webアプリ内部API (Java: Port 8081)
 
-```json
-{
-  "result": "通過",
-  "score": 0.742,
-  "threshold": 0.6,
-  "modelVersion": "demo-v1",
-  "reasons": [
-    {"label": "借入比率", "direction": "negative", "detail": "年収に対して借入が高め"},
-    {"label": "返済期間", "direction": "positive", "detail": "十分な期間が確保"}
-  ]
-}
+| メソッド | エンドポイント | 説明 |
+| --- | --- | --- |
+| `GET` | `/calculateInterestRate` | 金利の自動計算 |
+| `GET` | `/validateBranch` | 支店名の有効性検証 |
+| `POST` | `/saveBankLoan` | 申し込みデータと審査結果のDB保存 |
+
+---
+
+## 📁 プロジェクト構成 (抜粋)
+
+```text
+internship202602/
+├── ml-screening-api/          # 【審査AI】Python推論サーバー
+│   ├── app.py                 # FastAPIエンドポイント
+│   ├── train_model.py         # LightGBMモデル学習スクリプト
+│   └── requirements.txt
+│
+├── bankLoan/                  # 【Webアプリ】Spring Bootサーバー
+│   ├── src/main/java/com/example/internship/
+│   │   ├── controller/        # 画面・APIルーティング
+│   │   ├── service/           # ビジネスロジック・PythonAPI連携
+│   │   └── repository/        # データベースアクセス
+│   ├── src/main/resources/
+│   │   ├── application.yml    # ポート・DB・API連携設定
+│   │   └── templates/         # Thymeleaf HTMLテンプレート
+│   └── pom.xml
+│
+├── setup-mysql.sh             # DB初期化スクリプト
+└── check_database.sh          # データベース接続確認スクリプト
+
 ```
 
-## 起動手順
+---
 
-### 1. Python 推論 API を起動
+## 🔧 トラブルシューティング
 
-`ml-screening-api` で FastAPI を起動します。
+* **Q. Javaアプリが起動しない (Port 8081が既に使用中)**
+* `application.yml` の `server.port` を `8082` など別のポートに変更してください。
 
-```powershell
-cd C:\Users\ffg-training\dev\internship202602\ml-screening-api
-uvicorn app:app --host 0.0.0.0 --port 8000
-```
 
-必要に応じて学習を先に実行できます。
+* **Q. 審査APIに繋がらない (Unable to connect to screening API)**
+* PythonサーバーがPort 8000で起動しているか確認してください。
+* `application.yml` の `screening.api.base-url` の指定が `http://localhost:8000` になっているか確認してください。
 
-```powershell
-python train_model.py
-```
 
-詳細は `ml-screening-api/README.md` を参照してください。
+* **Q. DB接続エラー (Access denied for user 'root'@'localhost')**
+* MySQLが起動しているか確認し、`bash check_database.sh` を実行して疎通確認を行ってください。
 
-### 2. Spring Boot を起動
 
-IntelliJ から `bankLoan/src/main/java/com/example/internship/InternshipApplication.java` を起動するか、
-コマンドラインで起動します。
 
-```powershell
-cd C:\Users\ffg-training\dev\internship202602\bankLoan
-./mvnw spring-boot:run
-```
+---
 
-### 3. ブラウザでアクセス
-
-`http://localhost:8081/bankLoan` を開きます。
-
-## 設定
-
-設定は `bankLoan/src/main/resources/application.yml` で管理しています。
-
-- サーバーポート: `server.port`
-- DB 接続: `spring.datasource.*`
-- 審査 API: `screening.api.base-url` / `screening.api.path`
-
-## DB（MySQL）
-
-申込内容は `bankLoan_table` に保存します。ローカル MySQL を使う場合の例です。
-
-```sql
-CREATE TABLE bankLoan_table (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  bankName VARCHAR(100),
-  branchName VARCHAR(100),
-  bankAccountType VARCHAR(50),
-  bankAccountNum INT,
-  name VARCHAR(100),
-  loanType VARCHAR(50),
-  loanAmount INT,
-  annualIncome INT,
-  loanPeriod INT,
-  interestRate DECIMAL(6, 2)
-);
-```
-
-※ DB が起動していない場合、確認画面の申込ボタンで保存に失敗します。
-
-## 主要ソース
-
-- コントローラ: `bankLoan/src/main/java/com/example/internship/controller/BankLoanController.java`
-- 審査 API 呼び出し: `bankLoan/src/main/java/com/example/internship/service/ScreeningService.java`
-- 審査表示（JS）: `bankLoan/src/main/resources/static/js/bankLoanConfirmation.js`
-- 画面テンプレート: `bankLoan/src/main/resources/templates/*.html`
-
-## トラブルシュート
-
-- 審査が取得できない場合: Python API の起動、`data-screening-api-base` の URL、CORS を確認してください。
-- スコアが表示されない場合: ブラウザの開発者ツールで `/screening` のレスポンスを確認してください。
-
+*Developed by Takase Saito during Internship Program - February 2026*

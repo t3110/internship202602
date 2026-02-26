@@ -1,0 +1,164 @@
+/* ========================================
+   Bank Loan Confirmation Stylesheet
+   ======================================== */
+
+.container {
+    --progress-active-color: var(--warning-color);
+    --progress-fill-color: var(--warning-color);
+}
+
+/* ========== Progress Bar Fill Overrides ========== */
+.progress-bar-fill {
+    width: 50%;
+}
+
+/* ========== Info Sections ========== */
+.info-section {
+    background-color: var(--gray-light);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-medium);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+}
+
+.info-value {
+    color: var(--gray-dark);
+    font-weight: 600;
+    font-size: 14px;
+    text-align: right;
+}
+
+/* ========== Interest Rate Highlight ========== */
+.interest-rate-highlight {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    margin: 20px 0;
+}
+
+.interest-rate-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 6px;
+}
+
+.interest-rate-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* ========== Screening Section ========== */
+.screening-section {
+    border-left-color: var(--warning-color);
+}
+
+.screening-status {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 6px 14px;
+    border-radius: 18px;
+    background-color: var(--gray-light);
+    color: var(--gray-dark);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.screening-status.pass {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.screening-status.review {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.screening-score-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--gray-medium);
+    font-size: 14px;
+}
+
+.screening-score-value {
+    font-weight: 700;
+    color: var(--gray-dark);
+}
+
+.screening-reasons {
+    margin: 12px 0 0;
+    padding-left: 18px;
+    color: #555;
+    font-size: 13px;
+}
+
+.screening-reason-mark {
+    display: inline-block;
+    margin-right: 6px;
+    font-weight: 700;
+}
+
+.screening-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #777;
+}
+
+/* ========== Confirmation Badge ========== */
+.confirmation-badge {
+    display: inline-block;
+    background-color: var(--warning-color);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* ========== Button Overrides ========== */
+.btn {
+    flex: 1;
+}
+
+/* ========== Responsive Design ========== */
+@media (max-width: 600px) {
+    .info-row {
+        flex-direction: column;
+    }
+
+    .info-value {
+        text-align: left;
+        margin-top: 5px;
+    }
+}

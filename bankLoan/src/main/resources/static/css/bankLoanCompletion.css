@@ -1,0 +1,206 @@
+/* ========================================
+   Bank Loan Completion Stylesheet
+   ======================================== */
+
+:root {
+    --gray-light: #f0f7ff;
+    --gray-lighter: #f9f9f9;
+}
+
+body {
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    text-align: center;
+    --progress-fill-color: var(--success-color);
+}
+
+.header {
+    padding: 60px 40px;
+}
+
+.header h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.header p {
+    font-size: 15px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.header-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: slideInScale 0.6s ease-out;
+}
+
+@keyframes slideInScale {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.progress-step-circle {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.progress-step.completed .progress-step-circle {
+    background-color: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+.progress-step-label {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.progress-step.completed .progress-step-label {
+    color: white;
+    font-weight: 600;
+}
+
+.progress-bar-fill {
+    width: 100%;
+}
+
+.content {
+    padding: 50px 40px;
+}
+
+.success-badge {
+    display: inline-block;
+    background-color: var(--success-color);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-box {
+    background-color: var(--gray-light);
+    border-left: 4px solid var(--primary-color);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    margin: 20px 0;
+    text-align: left;
+}
+
+.info-box h3 {
+    color: var(--gray-dark);
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.info-box p {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.info-box p:last-child {
+    margin-bottom: 0;
+}
+
+.btn-primary {
+    min-width: 180px;
+}
+
+.footer {
+    background-color: var(--gray-lighter);
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid var(--gray-medium);
+    font-size: 12px;
+    color: #999;
+}
+
+@media (max-width: 600px) {
+    .header {
+        padding: 40px 25px;
+    }
+
+    .header-logo {
+        position: static;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .header-logo-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 28px;
+    }
+
+    .header-logo-text {
+        font-size: 16px;
+    }
+
+    .header-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+    }
+
+    .header h1 {
+        font-size: 26px;
+    }
+
+    .header p {
+        font-size: 14px;
+    }
+
+    .progress-container {
+        padding: 0 30px;
+    }
+
+    .progress-step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .progress-step-label {
+        font-size: 11px;
+    }
+
+    .progress-bar-line {
+        left: 30px;
+        right: 30px;
+        top: 15px;
+    }
+
+    .content {
+        padding: 30px 25px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        min-width: 140px;
+        width: 100%;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+}
+
